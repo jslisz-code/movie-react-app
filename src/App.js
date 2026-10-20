@@ -321,7 +321,10 @@ function App() {
 
         <footer className="footer">
           <div className="footer-signature">
-            <img src="/images/js-logo.svg" alt="Jordan Slisz signature" />
+            <img
+              src={`${process.env.PUBLIC_URL}/images/js-logo.svg`}
+              alt="Jordan Slisz signature"
+            />
           </div>
 
           <p>copyright 2026 Jordan Slisz ~ All rights reserved.</p>
