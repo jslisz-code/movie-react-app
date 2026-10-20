@@ -86,12 +86,7 @@ body {
   padding: 3px;
   border-radius: 12px;
 
-  background: linear-gradient(
-    90deg,
-    #ff4fa3,
-    #8b5cf6,
-    #3b82f6
-  );
+  background: linear-gradient(90deg, #ff4fa3, #8b5cf6, #3b82f6);
 }
 
 .search-bar input {
@@ -462,4 +457,247 @@ body {
 .page-button.active {
   background: #ff4fa3;
   border-color: #ff4fa3;
+}
+
+@keyframes cinematicEntrance {
+  0% {
+    opacity: 0;
+    transform: perspective(800px) rotateX(-35deg) scale(0.7) translateY(60px);
+    filter: blur(8px);
+  }
+
+  70% {
+    opacity: 1;
+    transform: perspective(800px) rotateX(5deg) scale(1.05) translateY(-8px);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(800px) rotateX(0deg) scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.movie-card {
+  opacity: 0;
+  animation: cinematicEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.movie-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.movie-card:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.movie-card:nth-child(3) {
+  animation-delay: 0.25s;
+}
+
+.movie-card:nth-child(4) {
+  animation-delay: 0.35s;
+}
+
+.movie-card:nth-child(5) {
+  animation-delay: 0.45s;
+}
+
+.movie-card:nth-child(6) {
+  animation-delay: 0.55s;
+}
+
+/* =========================
+   MOVIE FINDER INTRO
+   ========================= */
+
+.movie-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at center,
+    #1b1535 0%,
+    #090b14 55%,
+    #03040a 100%
+  );
+  animation: introExit 3.2s ease forwards;
+}
+
+/* Movie reel */
+
+.reel {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border: 10px solid #8b5cf6;
+  border-radius: 50%;
+  background: #11101d;
+  box-shadow:
+    0 0 25px #8b5cf6,
+    0 0 55px rgba(255, 79, 163, 0.45);
+  animation:
+    reelEntrance 0.7s ease-out forwards,
+    reelSpin 1.4s linear 0.7s infinite;
+}
+
+.reel-hole {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background: #090b14;
+  border: 4px solid #3b82f6;
+  border-radius: 50%;
+}
+
+.hole-1 {
+  top: 18px;
+  left: 69px;
+}
+
+.hole-2 {
+  top: 58px;
+  right: 18px;
+}
+
+.hole-3 {
+  bottom: 20px;
+  right: 43px;
+}
+
+.hole-4 {
+  bottom: 20px;
+  left: 43px;
+}
+
+.hole-5 {
+  top: 58px;
+  left: 18px;
+}
+
+.reel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  background: #ff4fa3;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 18px #ff4fa3;
+}
+
+/* Title */
+
+.intro-title {
+  margin-top: 32px;
+  color: white;
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: 8px;
+  text-shadow:
+    0 0 10px #ff4fa3,
+    0 0 25px #8b5cf6;
+  animation: titleReveal 1s ease 1s both;
+}
+
+/* Film strips */
+
+.film-strip {
+  position: absolute;
+  width: 150%;
+  height: 54px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 22px, #090b14 22px 34px),
+    #3b82f6;
+  border-top: 5px solid #ff4fa3;
+  border-bottom: 5px solid #8b5cf6;
+  opacity: 0.8;
+}
+
+.film-strip-left {
+  top: 18%;
+  transform: rotate(-8deg);
+  animation: filmSweepLeft 1.2s ease-out forwards;
+}
+
+.film-strip-right {
+  bottom: 15%;
+  transform: rotate(8deg);
+  animation: filmSweepRight 1.2s ease-out forwards;
+}
+
+/* Animations */
+
+@keyframes reelEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(-360deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes reelSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes titleReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+    letter-spacing: 20px;
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+    letter-spacing: 8px;
+  }
+}
+
+@keyframes filmSweepLeft {
+  from {
+    left: -160%;
+  }
+
+  to {
+    left: -20%;
+  }
+}
+
+@keyframes filmSweepRight {
+  from {
+    right: -160%;
+  }
+
+  to {
+    right: -20%;
+  }
+}
+
+@keyframes introExit {
+  0%,
+  82% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
 }

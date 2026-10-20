@@ -297,9 +297,41 @@ function MovieDetails() {
   );
 }
 
+function MovieIntro() {
+  return (
+    <div className="movie-intro">
+      <div className="film-strip film-strip-left"></div>
+
+      <div className="reel">
+        <div className="reel-hole hole-1"></div>
+        <div className="reel-hole hole-2"></div>
+        <div className="reel-hole hole-3"></div>
+        <div className="reel-hole hole-4"></div>
+        <div className="reel-hole hole-5"></div>
+        <div className="reel-center"></div>
+      </div>
+
+      <h1 className="intro-title">MOVIE FINDER</h1>
+
+      <div className="film-strip film-strip-right"></div>
+    </div>
+  );
+}
+
 function App() {
+  const [showIntro, setShowIntro] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowIntro(false);
+    }, 3200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <HashRouter>
+      {showIntro && <MovieIntro />}
       <div className="app">
         <nav className="navbar">
           <Link className="logo" to="/">
