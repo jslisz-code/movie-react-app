@@ -8,13 +8,32 @@ import {
 } from "react-router-dom";
 import "./App.css";
 
+function MoviePoster({ poster, title }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  if (!poster || poster === "N/A" || imageFailed) {
+    return <div className="no-poster">No Poster Available</div>;
+  }
+
+  return (
+    <img
+      src={poster}
+      alt={`${title} poster`}
+      onError={() => setImageFailed(true)}
+    />
+  );
+}
+
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [movies, setMovies] = useState([]);
   const [sortOrder, setSortOrder] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const moviesPerPage = 6;
 
   const searchMovies = async (event) => {
     event.preventDefault();
@@ -26,6 +45,7 @@ function Home() {
 
     setLoading(true);
     setError("");
+    setCurrentPage(1);
 
     try {
       const response = await fetch(
@@ -73,6 +93,24 @@ function Home() {
     return 0;
   });
 
+  const indexOfLastMovie = currentPage * moviesPerPage;
+  const indexOfFirstMovie = indexOfLastMovie - moviesPerPage;
+
+  const currentMovies = sortedMovies.slice(
+    indexOfFirstMovie,
+    indexOfLastMovie
+  );
+
+  const totalPages = Math.ceil(
+    sortedMovies.length / moviesPerPage
+  );
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [typeFilter, sortOrder, currentPage, totalPages]);
+
   return (
     <>
       <section className="hero">
@@ -98,7 +136,10 @@ function Home() {
           <div className="filter-controls">
             <select
               value={typeFilter}
-              onChange={(event) => setTypeFilter(event.target.value)}
+              onChange={(event) => {
+                setTypeFilter(event.target.value);
+                setCurrentPage(1);
+              }}
             >
               <option value="all">All Types</option>
               <option value="movie">Movies</option>
@@ -108,7 +149,10 @@ function Home() {
 
             <select
               value={sortOrder}
-              onChange={(event) => setSortOrder(event.target.value)}
+              onChange={(event) => {
+                setSortOrder(event.target.value);
+                setCurrentPage(1);
+              }}
             >
               <option value="">Sort by Year</option>
               <option value="newest">Newest First</option>
@@ -122,7 +166,9 @@ function Home() {
         {error && <p className="error-message">{error}</p>}
 
         {!loading && !error && movies.length === 0 && (
-          <p className="message">Search for a movie to get started.</p>
+          <p className="message">
+            Search for a movie to get started.
+          </p>
         )}
 
         {!loading &&
@@ -135,19 +181,16 @@ function Home() {
           )}
 
         <div className="movies-grid">
-          {sortedMovies.map((movie) => (
+          {currentMovies.map((movie) => (
             <Link
               className="movie-card"
               key={movie.imdbID}
               to={`/movie/${movie.imdbID}`}
             >
-              {movie.Poster !== "N/A" ? (
-                <img src={movie.Poster} alt={movie.Title} />
-              ) : (
-                <div className="no-poster">
-                  No Poster Available
-                </div>
-              )}
+              <MoviePoster
+                poster={movie.Poster}
+                title={movie.Title}
+              />
 
               <div className="movie-info">
                 <h3>{movie.Title}</h3>
@@ -157,6 +200,35 @@ function Home() {
             </Link>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="pagination">
+            {Array.from(
+              { length: totalPages },
+              (_, index) => (
+                <button
+                  key={index + 1}
+                  className={
+                    currentPage === index + 1
+                      ? "page-button active"
+                      : "page-button"
+                  }
+                  onClick={() => {
+                    setCurrentPage(index + 1);
+
+                    document
+                      .getElementById("movies")
+                      .scrollIntoView({
+                        behavior: "smooth",
+                      });
+                  }}
+                >
+                  {index + 1}
+                </button>
+              )
+            )}
+          </div>
+        )}
       </section>
     </>
   );
@@ -211,13 +283,10 @@ function MovieDetails() {
 
       <div className="details-card">
         <div className="details-poster">
-          {movie.Poster !== "N/A" ? (
-            <img src={movie.Poster} alt={movie.Title} />
-          ) : (
-            <div className="no-poster">
-              No Poster Available
-            </div>
-          )}
+          <MoviePoster
+            poster={movie.Poster}
+            title={movie.Title}
+          />
         </div>
 
         <div className="details-info">
@@ -283,12 +352,18 @@ function App() {
         </main>
 
         <footer className="footer">
-  <div className="footer-signature">
-    <img src="/images/js-logo.svg" alt="Jordan Slisz signature" />
-  </div>
+          <div className="footer-signature">
+            <img
+              src="/images/js-logo.svg"
+              alt="Jordan Slisz signature"
+            />
+          </div>
 
-  <p>copyright 2026 Jordan Slisz ~ All rights reserved.</p>
-</footer>
+          <p>
+            copyright 2026 Jordan Slisz ~ All rights
+            reserved.
+          </p>
+        </footer>
       </div>
     </BrowserRouter>
   );
