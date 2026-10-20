@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-  useParams,
-} from "react-router-dom";
+import { HashRouter, Routes, Route, Link, useParams } from "react-router-dom";
 import "./App.css";
 
 function MoviePoster({ poster, title }) {
@@ -50,8 +44,8 @@ function Home() {
     try {
       const response = await fetch(
         `https://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${encodeURIComponent(
-          searchTerm
-        )}`
+          searchTerm,
+        )}`,
       );
 
       const data = await response.json();
@@ -96,14 +90,9 @@ function Home() {
   const indexOfLastMovie = currentPage * moviesPerPage;
   const indexOfFirstMovie = indexOfLastMovie - moviesPerPage;
 
-  const currentMovies = sortedMovies.slice(
-    indexOfFirstMovie,
-    indexOfLastMovie
-  );
+  const currentMovies = sortedMovies.slice(indexOfFirstMovie, indexOfLastMovie);
 
-  const totalPages = Math.ceil(
-    sortedMovies.length / moviesPerPage
-  );
+  const totalPages = Math.ceil(sortedMovies.length / moviesPerPage);
 
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
@@ -166,18 +155,14 @@ function Home() {
         {error && <p className="error-message">{error}</p>}
 
         {!loading && !error && movies.length === 0 && (
-          <p className="message">
-            Search for a movie to get started.
-          </p>
+          <p className="message">Search for a movie to get started.</p>
         )}
 
         {!loading &&
           !error &&
           movies.length > 0 &&
           sortedMovies.length === 0 && (
-            <p className="message">
-              No results match this filter.
-            </p>
+            <p className="message">No results match this filter.</p>
           )}
 
         <div className="movies-grid">
@@ -187,10 +172,7 @@ function Home() {
               key={movie.imdbID}
               to={`/movie/${movie.imdbID}`}
             >
-              <MoviePoster
-                poster={movie.Poster}
-                title={movie.Title}
-              />
+              <MoviePoster poster={movie.Poster} title={movie.Title} />
 
               <div className="movie-info">
                 <h3>{movie.Title}</h3>
@@ -203,30 +185,25 @@ function Home() {
 
         {totalPages > 1 && (
           <div className="pagination">
-            {Array.from(
-              { length: totalPages },
-              (_, index) => (
-                <button
-                  key={index + 1}
-                  className={
-                    currentPage === index + 1
-                      ? "page-button active"
-                      : "page-button"
-                  }
-                  onClick={() => {
-                    setCurrentPage(index + 1);
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                className={
+                  currentPage === index + 1
+                    ? "page-button active"
+                    : "page-button"
+                }
+                onClick={() => {
+                  setCurrentPage(index + 1);
 
-                    document
-                      .getElementById("movies")
-                      .scrollIntoView({
-                        behavior: "smooth",
-                      });
-                  }}
-                >
-                  {index + 1}
-                </button>
-              )
-            )}
+                  document.getElementById("movies").scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                {index + 1}
+              </button>
+            ))}
           </div>
         )}
       </section>
@@ -245,7 +222,7 @@ function MovieDetails() {
     const getMovieDetails = async () => {
       try {
         const response = await fetch(
-          `https://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&i=${id}&plot=full`
+          `https://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&i=${id}&plot=full`,
         );
 
         const data = await response.json();
@@ -256,9 +233,7 @@ function MovieDetails() {
           setError(data.Error || "Movie not found.");
         }
       } catch (error) {
-        setError(
-          "Something went wrong while loading the movie."
-        );
+        setError("Something went wrong while loading the movie.");
       }
 
       setLoading(false);
@@ -283,10 +258,7 @@ function MovieDetails() {
 
       <div className="details-card">
         <div className="details-poster">
-          <MoviePoster
-            poster={movie.Poster}
-            title={movie.Title}
-          />
+          <MoviePoster poster={movie.Poster} title={movie.Title} />
         </div>
 
         <div className="details-info">
@@ -297,8 +269,7 @@ function MovieDetails() {
           </p>
 
           <p>
-            <strong>IMDb Rating:</strong> ⭐{" "}
-            {movie.imdbRating}
+            <strong>IMDb Rating:</strong> ⭐ {movie.imdbRating}
           </p>
 
           <p>
@@ -328,7 +299,7 @@ function MovieDetails() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="app">
         <nav className="navbar">
           <Link className="logo" to="/">
@@ -344,28 +315,19 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route
-              path="/movie/:id"
-              element={<MovieDetails />}
-            />
+            <Route path="/movie/:id" element={<MovieDetails />} />
           </Routes>
         </main>
 
         <footer className="footer">
           <div className="footer-signature">
-            <img
-              src="/images/js-logo.svg"
-              alt="Jordan Slisz signature"
-            />
+            <img src="/images/js-logo.svg" alt="Jordan Slisz signature" />
           </div>
 
-          <p>
-            copyright 2026 Jordan Slisz ~ All rights
-            reserved.
-          </p>
+          <p>copyright 2026 Jordan Slisz ~ All rights reserved.</p>
         </footer>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
